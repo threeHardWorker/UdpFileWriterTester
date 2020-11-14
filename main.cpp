@@ -16,11 +16,11 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    QString ip = argv[0];
-    qint16 port = QString(argv[1]).toShort();
+    QString ip = argv[1];
+    qint16 port = QString(argv[2]).toShort();
 
     QUdpSocket qus;
-    for(int i=0; i<200; ++i)
+    for(int i=0; i<20; ++i)
     {
         QByteArray msg = "market.BTC-USDT.depth.step01";
         msg = msg.leftJustified(64, ' ', true);
