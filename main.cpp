@@ -6,7 +6,8 @@
 #include <QDateTime>
 #include <QFile>
 
-//#define TEST_UNPACH
+#define TEST_UNPACH
+#define TIME_WIDTH 13
 
 bool testUnpack(const QString &fileName)
 {
@@ -15,19 +16,20 @@ bool testUnpack(const QString &fileName)
     {
         while (!file.atEnd())
         {
-            int i = sizeof(uint32_t);
-            char len[sizeof(uint32_t)+1] = {0};
+            char len[sizeof(uint32_t)] = {0};
             file.read(len, sizeof(uint32_t));
             uint32_t iLen = *(uint32_t*)(&len);
 
-            char time[13] = {0};
-            file.read(time, 13);
-            QByteArray gzip = file.read(iLen-13);
-            QFile fileGzip(QString(time) + ".gz");
+            char time[TIME_WIDTH+1] = {0};
+            file.read(time, TIME_WIDTH);
+            QByteArray gzip = file.read(iLen-TIME_WIDTH);
+            QString gzipFileName = QString(time) + ".gz";
+            QFile fileGzip(gzipFileName);
             if (fileGzip.open(QFile::WriteOnly))
             {
                 fileGzip.write(gzip, iLen-13);
                 fileGzip.close();
+                qDebug()<<gzipFileName<<"end";
             }
         }
     }
