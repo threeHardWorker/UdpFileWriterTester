@@ -6,8 +6,9 @@
 #include <QDateTime>
 #include <QFile>
 
-#define TEST_UNPACH
+//#define TEST_UNPACH
 #define TIME_WIDTH 13
+#define TEST_SEND_PACKED_DATA
 
 bool testUnpack(const QString &fileName)
 {
@@ -53,8 +54,14 @@ int main(int argc, char *argv[])
     qint16 port = QString(argv[2]).toShort();
 
     QUdpSocket qus;
-    for(int i=0; i<5; ++i)
+    for(int i=0; i<17000; ++i)
     {
+#ifdef TEST_SEND_PACKED_DATA
+        QByteArray msg = QString("market.btcusdt.depth.step0,%1,17671.09,2,17671.640000,1")
+                .arg(QString::number(QDateTime::currentMSecsSinceEpoch())).toLatin1();
+        qus.writeDatagram(msg, QHostAddress(ip), port);
+        qDebug() << "--- Sender ---"<<msg<< endl;
+#else
         QByteArray msg = "market.BTC-USDT.depth.step01";
         msg = msg.leftJustified(64, ' ', true);
         QString timestamp = QString::number(QDateTime::currentMSecsSinceEpoch());
@@ -72,6 +79,7 @@ int main(int argc, char *argv[])
             qCritical()<<"open file:"<<fileName<<"error"<<endl;
             break;
         }
+#endif
     }
 #endif
 
